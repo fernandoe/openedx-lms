@@ -21,15 +21,3 @@ script:
 
 after_success:
   - docker push $TRAVIS_REPO_SLUG
-
-deploy:
-  skip_cleanup: true
-  provider: script
-  script:
-    - ./scripts/deploy.sh
-  on:
-    tags: true
-    branch:
-      - master
-#      - feature-codigo-minimo-para-rodar
-      - /(\d+\.)?(\d+\.)?(\*|\d+)$/
