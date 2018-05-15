@@ -1,1 +1,9 @@
 # openedx-lms
+
+
+## Environments
+
+- EDXAPP_MYSQL_HOST
+- EDXAPP_MYSQL_DB_NAME
+- EDXAPP_MYSQL_USER
+- EDXAPP_MYSQL_PASSWORD

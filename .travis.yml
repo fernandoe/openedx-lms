@@ -1,0 +1,35 @@
+language: generic
+sudo: required
+services:
+- docker
+
+env:
+  global:
+  - secure: MyMw1J8EU3PDlWH3MzoUm+zDhCLDPOc8g93X1L5lbhaEgAnfqB0pMu2U1A2PJA7CY9jbtuXECQz6DoGUdHJSbbSp8NDoj52yZEq0Szs2B5sopAJTMLdOMVEWERBGVaGyEIXsLZ9DmYR3k0klFfoyGZtmfKtMErIo7xGQV+PyYeVz1oX25XT5TdQ95uQfvNe6uRLvY2ovtBi2AcfubslR7+Wapxnq5nQpXjW0gy0C6cUh/ylrUzbRxEEollYfv7wL6NJIkxRwT8b8MP8/g7DErLvhJUdQr0VSy6flwn8EipIaNyoZDyL7YJvniRz/e4goFe0+iQ3tmP8/9SFx28DR15qVRlVHv/2FmZJvDwxb2sn+4a1BgFGOhvI606vS2hKL1ge/hJ/ieQ22z5MjMHUNK+tAFirP7nXw+UFWQBbgpm3OBquVe2Xr7ndbekLU5bWrbo8U+z1Evvc0QBMaZdohOSIC3veL7udkSHB4XdNsPfgVSEnRBqS0SwhccCaEh4u+juOKJiOgaAC+qhxTodCc6DQwy+77kx8ohnIHCVqBvduJyiBJNK0Wr+wCl67mBGdcNrX09peUpVN9MQ+hhlQYnQDFQN0sPt8rJclronNAF9Lx/Yag6VQUdwkcdadw479YYJdgWAkc1MU1ISSedTbpOVtYjE5WoZwj4THi9Dysuqw=
+  - secure: jQbXEFMK2gof+sSY5DowvxqiK4PUNaP7SKLIH+SAPY1LgFCfrrlMm2iIWMj/SDGfGgFzfkgfEmaLuGRDaR+IODCAJ33FcpyZA8Pa3xFQegFKPwoWyr41HCxTkhX+clInYxw1HEiEq2CLGro6lUaeqpniKJK++nsImym5CppyoEE3UnXV7S2nXf4ybhIcv5/jAB82hGiDwjEd/x5clKdnpdfdOonVnZ9HPOtpykeZcHBjZY02NxUByGL0kaUX24qd9zK9/xUpXmm7EV5wvfUUKPRqvj4tOgrlUXypHDeVovg3yQfuZV+g/nVqHS0S5LUi9K6pQCNKKrXTOmLKdl+zEv2ZRTJrBQ8AV/TFkMSchgbKjlKsn2LetCtA4d8TTBlD2gNKROYqZ6/BMdu1eC6Zjh7Ac52nDwKpqxw5rlx6V6Bwc3RtgqaH4KAkgguH8xWbpPP4Zli4iUblV+coxYb5iLDyEiJpLk4Gzo6jGtK5SCQEpi9gD5pX+g8QxYHdePZMQnYCvIv0F+boPxft9Lhhfmep4NOObvR78Oude0HN0g2q/Hfj9O9ZJbJdSQgOIPF9m3GNW2f0V7keiU90RUZklrWBSjJGSuSt0mp73J/8bxueYrEezbVGhthbhQalD0pjmmk8orYZfjY915s5CEb48DL+PGLm+Zu3ZMBbgSss28M=
+
+before_install:
+  - echo "$DOCKER_PASS" | docker login -u $DOCKER_USER --password-stdin
+
+install:
+  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+  - git submodule update --init
+  - docker build -f Dockerfile -t $TRAVIS_REPO_SLUG:$TAG .
+
+script:
+  - true
+
+after_success:
+  - docker push $TRAVIS_REPO_SLUG
+
+deploy:
+  skip_cleanup: true
+  provider: script
+  script:
+    - ./scripts/deploy.sh
+  on:
+    tags: true
+    branch:
+      - master
+#      - feature-codigo-minimo-para-rodar
+      - /(\d+\.)?(\d+\.)?(\*|\d+)$/
