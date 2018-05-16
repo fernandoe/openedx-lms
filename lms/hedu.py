@@ -53,3 +53,64 @@ CACHES = {
         ]
     }
 }
+
+MODULESTORE = {
+    "default": {
+        "ENGINE": "xmodule.modulestore.mixed.MixedModuleStore",
+        "OPTIONS": {
+            "mappings": {},
+            "stores": [
+                {
+                    "NAME": "draft",
+                    "DOC_STORE_CONFIG": {
+                        "collection": "modulestore",
+                        "db": "test",
+                        "host": [
+                            os.environ.get('MONGODB_MONGODB_SERVICE_HOST')
+                        ],
+                        "port": 27017
+                    },
+                    "ENGINE": "xmodule.modulestore.mongo.DraftMongoModuleStore",
+                    "OPTIONS": {
+                        "collection": "modulestore",
+                        "db": "test",
+                        "default_class": "xmodule.hidden_module.HiddenDescriptor",
+                        "fs_root": "** OVERRIDDEN **",
+                        "host": [
+                            os.environ.get('MONGODB_MONGODB_SERVICE_HOST')
+                        ],
+                        "port": 27017,
+                        "render_template": "edxmako.shortcuts.render_to_string"
+                    }
+                },
+                {
+                    "NAME": "xml",
+                    "ENGINE": "xmodule.modulestore.xml.XMLModuleStore",
+                    "OPTIONS": {
+                        "data_dir": "** OVERRIDDEN **",
+                        "default_class": "xmodule.hidden_module.HiddenDescriptor"
+                    }
+                }
+            ]
+        }
+    }
+}
+
+CONTENTSTORE = {
+    "DOC_STORE_CONFIG": {
+        "collection": "modulestore",
+        "db": "test",
+        "host": [
+            os.environ.get('MONGODB_MONGODB_SERVICE_HOST')
+        ],
+        "port": 27017
+    },
+    "ENGINE": "xmodule.contentstore.mongo.MongoContentStore",
+    "OPTIONS": {
+        "db": "test",
+        "host": [
+            os.environ.get('MONGODB_MONGODB_SERVICE_HOST')
+        ],
+        "port": 27017
+    }
+}
